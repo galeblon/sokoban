@@ -1,0 +1,1 @@
+g++ -O2 -ISDL-2.0.7\include -L. -o main main.cpp Game_Logic.cpp SDL_Logic.cpp -BGame_Logic.H -BSDL_Logic.h -lm -lSDL2x64 -lpthread -ldl -lrt
