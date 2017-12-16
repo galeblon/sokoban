@@ -36,7 +36,6 @@ int main(int argc, char **argv) {
 	}
 
 	// zwolnienie powierzchni / freeing all surfaces
-	gameDisplay.cleanUp();
 	SDL_Quit();
 	return 0;
 	};

@@ -159,15 +159,14 @@ void map::draw(display* gameDisplay, SDL_Rect tile) {
 				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[1], NULL, &tile);
 			}
 			else if (this->entity[i][j].type == CRATE) {
+				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[0], NULL, &tile);
 				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[2], NULL, &tile);
 			}
 			else if (this->entity[i][j].type == FLOOR) {
 				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[0], NULL, &tile);
 			}
-			else if (this->entity[i][j].type == GOAL) {
-				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[0], NULL, &tile);
+			if(this->entity[i][j].is_goal)
 				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[3], NULL, &tile);
-			}
 		}
 	}
 }
@@ -185,6 +184,7 @@ map* loadMap(const char* fName, actor* player) {
 	for (int i = 0; i < loadedMap->dimension.height; i++) {
 		for (int j = 0; j < loadedMap->dimension.width; j++) {
 			val = fgetc(pMap);
+			loadedMap->entity[i][j].is_goal = false;
 			if (val == '\n') {
 				j--;
 				continue;
@@ -196,7 +196,8 @@ map* loadMap(const char* fName, actor* player) {
 			}else if (val == 'f') {
 				loadedMap->entity[i][j].type = FLOOR;
 			}else if(val == 'g'){
-				loadedMap->entity[i][j].type = GOAL;
+				loadedMap->entity[i][j].type = FLOOR;
+				loadedMap->entity[i][j].is_goal = true;
 			}else if(val == 'p'){
 				loadedMap->entity[i][j].type = FLOOR;
 				if(player != NULL)
@@ -319,24 +320,17 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 	int t1, t2, quit, frames;
 	double delta, worldTime, fpsTimer, fps;
 	SDL_Event event;
-	SDL_Surface *screen;
-	SDL_Texture *scrtex;
 	actor Player; actor activeCrate;
 	activeCrate.initialize(0, 0, true, PUSHING_SPEED);
-	map* gameMap = loadMap(lvlName, &Player);
+	map* gameMap = loadMap(lvlName, &Player); 
+	text_display messages(gameDisplay.renderer);
 
-	screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32,
-		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-
-	scrtex = SDL_CreateTexture(gameDisplay.renderer, SDL_PIXELFORMAT_ARGB8888,
-		SDL_TEXTUREACCESS_STREAMING,
-		SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	char text[128];
-	int czarny = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
-	int zielony = SDL_MapRGB(screen->format, 0x00, 0xFF, 0x00);
-	int czerwony = SDL_MapRGB(screen->format, 0xFF, 0x00, 0x00);
-	int niebieski = SDL_MapRGB(screen->format, 0x11, 0x11, 0xCC);
+	int czarny = SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00);
+	int zielony = SDL_MapRGB(messages.surface->format, 0x00, 0xFF, 0x00);
+	int czerwony = SDL_MapRGB(messages.surface->format, 0xFF, 0x00, 0x00);
+	int niebieski = SDL_MapRGB(messages.surface->format, 0x11, 0x11, 0xCC);
 
 	t1 = SDL_GetTicks();
 
@@ -345,26 +339,25 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 	fps = 0;
 	quit = 0;
 	worldTime = 0;
-	while (!quit) {
+	while (true) {
 		t2 = SDL_GetTicks();
 		delta = (t2 - t1) * 0.001;
 		t1 = t2;
 		worldTime += delta;
 
 
-		SDL_FillRect(screen, NULL, czarny);
+		SDL_FillRect(messages.surface, NULL, czarny);
 		fpsTimer += delta;
 		if (fpsTimer > 0.5) {
 			fps = frames * 2;
 			frames = 0;
 			fpsTimer -= 0.5;
 		};
-		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 36, czerwony, niebieski);
+		DrawRectangle(messages.surface, 4, 4, SCREEN_WIDTH - 8, 36, czerwony, niebieski);
 		sprintf(text, "Moves: %3d Time elapsed: %.1lf s  %.0lf FPS", Player.moves, worldTime, fps);
-		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, gameDisplay.charset);
-		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
-		//		SDL_RenderClear(renderer);
-		SDL_RenderCopy(gameDisplay.renderer, scrtex, NULL, NULL);
+		DrawString(messages.surface, messages.surface->w / 2 - strlen(text) * 8 / 2, 10, text, gameDisplay.charset);
+		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
+		SDL_RenderCopy(gameDisplay.renderer, messages.texture, NULL, NULL);
 
 
 		SDL_Rect tile = calculateTileDimension(gameMap);
@@ -387,21 +380,15 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 				else if (event.key.keysym.sym == SDLK_LEFT) Player.move(LEFT, gameMap, &activeCrate);
 				else if (event.key.keysym.sym == SDLK_RIGHT) Player.move(RIGHT, gameMap, &activeCrate);
 				else if (event.key.keysym.sym == SDLK_n) { 
-					SDL_FreeSurface(screen);
-					SDL_DestroyTexture(scrtex);
 					return RESET;
 				}
 				else if (event.key.keysym.sym == SDLK_ESCAPE) {
-					SDL_FreeSurface(screen);
-					SDL_DestroyTexture(scrtex);
 					return MAIN_MENU;
 				}
 				break;
 			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
-				SDL_FreeSurface(screen);
-				SDL_DestroyTexture(scrtex);
 				return QUIT;
 				break;
 			};
@@ -414,46 +401,32 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 game_states menuLoop(display &gameDisplay) {
 	int quit = 0;
 	SDL_Event event;
-	SDL_Surface *screen;
-	SDL_Texture* scrtex;
-
-	screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32,
-		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-	scrtex = SDL_CreateTexture(gameDisplay.renderer, SDL_PIXELFORMAT_ARGB8888,
-		SDL_TEXTUREACCESS_STREAMING,
-		SCREEN_WIDTH, SCREEN_HEIGHT);
-	int czarny = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
-	int zielony = SDL_MapRGB(screen->format, 0x00, 0xFF, 0x00);
-	int czerwony = SDL_MapRGB(screen->format, 0xFF, 0x00, 0x00);
-	int niebieski = SDL_MapRGB(screen->format, 0x11, 0x11, 0xCC);
+	text_display messages(gameDisplay.renderer);
 
 	int top_margin = SCREEN_HEIGHT / 2 - NUM_OF_OPTIONS*(OPTION_HEIGHT + 50) / 2;
-	SDL_Rect cursor;
-	cursor.h = cursor.w = OPTION_HEIGHT;
-	cursor.x = screen->w / 2 - 100;
-	cursor.y = top_margin;
+	int spacing = SCREEN_HEIGHT/NUM_OF_OPTIONS*0.2;
+	cursor menuCursor(OPTION_HEIGHT, messages.surface->w / 2 - 100, top_margin, spacing);
 
+	while (1) {
+		menuCursor.shape.y = menuCursor.y_val();
+		SDL_FillRect(messages.surface, NULL, SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00));
+		drawMenu(gameDisplay, messages.surface, top_margin, spacing);
+		SDL_FillRect(messages.surface, &(menuCursor.shape), SDL_MapRGB(messages.surface->format, 0xFF, 0xFF, 0xFF));
 
-	while (!quit) {
-		SDL_FillRect(screen, NULL, czarny);
-		drawMenu(gameDisplay, screen, top_margin);
-		SDL_FillRect(screen, &cursor, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
-
-		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
-		SDL_RenderCopy(gameDisplay.renderer, scrtex, NULL, NULL);
+		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
+		SDL_RenderCopy(gameDisplay.renderer, messages.texture, NULL, NULL);
 		SDL_RenderPresent(gameDisplay.renderer);
 
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_KEYDOWN:
-				if (event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-				else if (event.key.keysym.sym == SDLK_UP) cursor.y -= 50;
-				else if (event.key.keysym.sym == SDLK_DOWN) cursor.y += 50;
+				if (event.key.keysym.sym == SDLK_ESCAPE) return QUIT;
+				else if (event.key.keysym.sym == SDLK_RETURN) return menuCursor.pos_val();
+				else if (event.key.keysym.sym == SDLK_UP) menuCursor.change_pos(-1);
+				else if (event.key.keysym.sym == SDLK_DOWN) menuCursor.change_pos(1);
 			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
-				SDL_FreeSurface(screen);
-				SDL_DestroyTexture(scrtex);
 				return QUIT;
 				break;
 			};
@@ -462,9 +435,46 @@ game_states menuLoop(display &gameDisplay) {
 }
 
 
-void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin) {
-	const char* menu_options[NUM_OF_OPTIONS] = { "New Game", "Quit" };
+void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin, int spacing) {
+	const char* menu_options[NUM_OF_OPTIONS] = { "New Game", "Select Level", "High Scores", "Quit" };
 	for (int i = 0; i < NUM_OF_OPTIONS; i++) {
-		DrawString(screen, screen->w / 2 - strlen(menu_options[i]) * 8 / 2, top_margin+i*50, menu_options[i], gameDisplay.charset);
+		DrawString(screen, screen->w / 2 - strlen(menu_options[i]) * 8 / 2, top_margin+i*spacing, menu_options[i], gameDisplay.charset);
+	}
+}
+
+
+cursor::cursor(int size, int origin_x, int origin_y, int jump) {
+	this->shape.w = this->shape.h = size;
+	this->shape.x = origin_x;
+	this->shape.y = origin_y;
+	this->origin_y = origin_y;
+	this->jump = jump;
+	this->pos = 0;
+}
+
+
+void cursor::change_pos(int dir) {
+	if (this->pos == 0 && dir < 0)
+		this->pos = NUM_OF_OPTIONS - 1;
+	else
+		this->pos = (this->pos + dir) % NUM_OF_OPTIONS;
+}
+
+
+int cursor::y_val() {
+	return this->origin_y + this->pos*this->jump;
+}
+
+
+game_states cursor::pos_val() {
+	switch (this->pos) {
+	case 0:
+		return GAME;
+	case 1:
+		return GAME;
+	case 2:
+		return GAME;
+	case 3:
+		return QUIT;
 	}
 }

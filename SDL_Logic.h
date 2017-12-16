@@ -23,6 +23,8 @@ extern "C"
 //#define SCREEN_WIDTH	640
 //#define SCREEN_HEIGHT	480
 
+
+
 struct display {
 	SDL_Renderer *renderer;
 	SDL_Window *window;
@@ -32,10 +34,17 @@ struct display {
 
 	// inicjalizacja window and renderera jak i za³adowanie potrzebnych tekstur
 	int initialize();
-	void cleanUp();
+	~display();
 
 };
 
+struct text_display {
+	SDL_Surface *surface;
+	SDL_Texture *texture;
+
+	text_display(SDL_Renderer* renderer);
+	~text_display();
+};
 
 // wczytanie pojedyñczej powierzchni.
 SDL_Surface* loadSurface(const char* path);

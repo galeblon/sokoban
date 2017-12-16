@@ -5,7 +5,7 @@
 #include"SDL_Logic.h"
 
 
-#define NUM_OF_OPTIONS 2
+#define NUM_OF_OPTIONS 4
 #define OPTION_HEIGHT 8
 
 #define PUSHING_SPEED 3
@@ -60,6 +60,7 @@ struct dimensions {
 
 struct entities {
 	types type;
+	bool is_goal;
 };
 
 struct map {
@@ -85,6 +86,18 @@ struct actor {
 
 };
 
+
+struct cursor {
+	SDL_Rect shape;
+	int pos;
+	int jump;
+	int origin_y;
+
+	cursor(int size, int origin_x, int origin_y, int jump);
+	void change_pos(int dir);
+	int y_val();
+	game_states pos_val();
+};
 
 // zczytuje mape z pliku tekstowego i inicjalizuje wartosci poczatkowe gracza
 map* loadMap(const char* fName, actor* player);
@@ -128,6 +141,7 @@ game_states gameLoop(const char* lvlName, display &gameDisplay);
 // petla w ktorej odbywa sie menu glowne
 game_states menuLoop(display &gameDisplay);
 
-void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin);
+void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin, int spacing);
+
 
 #endif 

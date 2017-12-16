@@ -16,7 +16,7 @@ int display::initialize() {
 }
 
 
-void display::cleanUp() {
+display::~display() {
 	SDL_FreeSurface(this->charset);
 	for (int i = 0; i < sizeof(this->gameTextures) / sizeof(SDL_Texture*); i++) {
 		SDL_DestroyTexture(this->gameTextures[i]);
@@ -119,3 +119,19 @@ void DrawRectangle(SDL_Surface *screen, int x, int y, int l, int k,
 	for (i = y + 1; i < y + k - 1; i++)
 		DrawLine(screen, x + 1, i, l - 2, 1, 0, fillColor);
 };
+
+
+text_display::text_display(SDL_Renderer* renderer) {
+	surface = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32,
+		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+
+	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING,
+		SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+
+text_display::~text_display() {
+	SDL_FreeSurface(surface);
+	SDL_DestroyTexture(texture);
+}
