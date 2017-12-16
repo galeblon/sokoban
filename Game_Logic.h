@@ -5,9 +5,16 @@
 #include"SDL_Logic.h"
 
 
+#define NUM_OF_OPTIONS 2
+#define OPTION_HEIGHT 8
+
 #define PUSHING_SPEED 3
 #define RUNNING_SPEED 12
-#define ROTATING_SPEED 12
+#define ROTATING_SPEED 12 
+
+#define LEGEND_HEIGHT 100
+
+
 
 enum types {
 	WALL,
@@ -23,6 +30,14 @@ enum mov_states {
 	MOVING,
 	ROTATING,
 	PUSHING
+};
+
+enum game_states {
+	GAME,
+	MAIN_MENU,
+	RESET,
+	SELECT,
+	QUIT
 };
 
 enum directions {
@@ -57,14 +72,14 @@ struct map {
 struct actor {
 	bool is_puppet;
 	double angle, old_angle;
-	int rot_vel, mov_vel;
+	int rot_vel, mov_vel, moves;
 	double timer;
 	coords pos; coords old_pos;
 	mov_states mov_state;
 
 	void initialize(int x, int y, bool isPuppet, int vel);
-	int move(directions direction, map* gameMap, actor* crate);
-	void update(double delta, map* gameMap, actor* crate); // todo
+	int move(directions direction, map* gameMap, actor* puppet);
+	void update(double delta, map* gameMap, actor* puppet);
 	void draw(display* gameDisplay, SDL_Rect tile);
 	int process_input(directions direction, map* gameMap, actor* crate);
 
@@ -101,9 +116,18 @@ directions angleToDirection(int angle);
 double getRotation(double old_angle, double new_angle);
 
 // zwraca odpowiednie przesuniecie w czasie w trakcie poruszania
-void getInterpolation(SDL_Rect* tile, int delta, int direction);
+void getInterpolation(SDL_Rect* tile, double delta, int direction);
 
 // powolanie animacji skrzynki do zycia
 void animate_puppet(coords pos, map* gameMap, actor* puppet, directions direction);
+
+
+// petle w ktorej odbya sie glowna gra
+game_states gameLoop(const char* lvlName, display &gameDisplay);
+
+// petla w ktorej odbywa sie menu glowne
+game_states menuLoop(display &gameDisplay);
+
+void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin);
 
 #endif 
