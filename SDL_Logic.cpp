@@ -131,7 +131,8 @@ text_display::text_display(SDL_Renderer* renderer) {
 }
 
 
-text_display::~text_display() {
-	SDL_FreeSurface(surface);
-	SDL_DestroyTexture(texture);
+
+text_display::~text_display(){
+	SDL_FreeSurface(this->surface);
+	SDL_DestroyTexture(this->texture);
 }

@@ -1,6 +1,24 @@
-﻿  main.cpp
+﻿  Game_Logic.cpp
 c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\math.h(1001): warning C4005: 'M_PI': macro redefinition
   c:\pliki\studia\pp\szablon2\sdl-2.0.7\include\sdl_stdinc.h(499): note: see previous definition of 'M_PI'
-c:\pliki\studia\pp\szablon2\main.cpp(6): warning C4101: 'event': unreferenced local variable
-c:\pliki\studia\pp\szablon2\main.cpp(5): warning C4101: 'quit': unreferenced local variable
+c:\pliki\studia\pp\szablon2\game_logic.cpp(103): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(135): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(144): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(176): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+c:\pliki\studia\pp\szablon2\game_logic.cpp(179): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
+c:\pliki\studia\pp\szablon2\game_logic.cpp(217): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(218): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(219): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(295): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(298): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(301): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(304): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(357): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\pliki\studia\pp\szablon2\game_logic.cpp(409): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(77): warning C4715: 'actor::process_input': not all control paths return a value
+c:\pliki\studia\pp\szablon2\game_logic.cpp(316): warning C4715: 'angleToDirection': not all control paths return a value
+c:\pliki\studia\pp\szablon2\game_logic.cpp(482): warning C4715: 'cursor::pos_val': not all control paths return a value
   szablon2vs15.vcxproj -> C:\Pliki\studia\pp\szablon2\Debug\szablon2vs15.exe

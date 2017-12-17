@@ -380,15 +380,18 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 				else if (event.key.keysym.sym == SDLK_LEFT) Player.move(LEFT, gameMap, &activeCrate);
 				else if (event.key.keysym.sym == SDLK_RIGHT) Player.move(RIGHT, gameMap, &activeCrate);
 				else if (event.key.keysym.sym == SDLK_n) { 
+					delete gameMap;
 					return RESET;
 				}
 				else if (event.key.keysym.sym == SDLK_ESCAPE) {
+					delete gameMap;
 					return MAIN_MENU;
 				}
 				break;
 			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
+				delete gameMap;
 				return QUIT;
 				break;
 			};
@@ -399,7 +402,6 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 
 
 game_states menuLoop(display &gameDisplay) {
-	int quit = 0;
 	SDL_Event event;
 	text_display messages(gameDisplay.renderer);
 
@@ -477,4 +479,11 @@ game_states cursor::pos_val() {
 	case 3:
 		return QUIT;
 	}
+}
+
+map::~map() {
+	for (int i = 0; i < dimension.height; i++)
+		delete[] entity[i];
+	delete[] entity;
+
 }

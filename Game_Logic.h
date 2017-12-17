@@ -68,6 +68,7 @@ struct map {
 	dimensions dimension;
 
 	void draw(display* gameDisplay, SDL_Rect tile);
+	~map();
 };
 
 struct actor {
