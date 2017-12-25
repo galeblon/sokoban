@@ -14,6 +14,8 @@
 
 #define LEGEND_HEIGHT 100
 
+#define MAX_PL_NAME_LENGTH 30
+
 
 
 enum types {
@@ -37,6 +39,7 @@ enum game_states {
 	MAIN_MENU,
 	RESET,
 	SELECT,
+	CONTINUE_GAME,
 	QUIT
 };
 
@@ -67,8 +70,17 @@ struct map {
 	entities** entity;
 	dimensions dimension;
 
+	bool isSolved();
 	void draw(display* gameDisplay, SDL_Rect tile);
 	~map();
+};
+
+struct map_list {
+	int amount;
+	char ** arr;
+
+	map_list(const char* path);
+	~map_list();
 };
 
 struct actor {
@@ -81,7 +93,7 @@ struct actor {
 
 	void initialize(int x, int y, bool isPuppet, int vel);
 	int move(directions direction, map* gameMap, actor* puppet);
-	void update(double delta, map* gameMap, actor* puppet);
+	int update(double delta, map* gameMap, actor* puppet);
 	void draw(display* gameDisplay, SDL_Rect tile);
 	int process_input(directions direction, map* gameMap, actor* crate);
 

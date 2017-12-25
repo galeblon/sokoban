@@ -74,6 +74,7 @@ int actor::process_input(directions direction, map* gameMap, actor* puppet) {
 		}
 		break;
 	}
+	return 0;
 }
 
 int actor::move(directions direction, map* gameMap, actor* puppet) {
@@ -94,7 +95,7 @@ int actor::move(directions direction, map* gameMap, actor* puppet) {
 	return 0;
 }
 
-void actor::update(double delta, map* gameMap, actor* puppet) {
+int actor::update(double delta, map* gameMap, actor* puppet) {
 	if (this->mov_state == ROTATING) {
 		if (this->timer*rot_vel <= 1) {
 			this->timer += delta;
@@ -116,8 +117,10 @@ void actor::update(double delta, map* gameMap, actor* puppet) {
 			this->old_pos = this->pos;
 			this->moves++;
 			if(puppet != NULL)this->mov_vel = RUNNING_SPEED;
+			if (gameMap->isSolved()) return 1;
 		}
 	}
+	return 0;
 }
 
 void actor::draw(display* gameDisplay, SDL_Rect tile) {
@@ -165,15 +168,35 @@ void map::draw(display* gameDisplay, SDL_Rect tile) {
 			else if (this->entity[i][j].type == FLOOR) {
 				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[0], NULL, &tile);
 			}
-			if(this->entity[i][j].is_goal)
-				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[3], NULL, &tile);
+			if (this->entity[i][j].is_goal) {
+				SDL_Rect goal_offset;
+				goal_offset.h = goal_offset.w = 64;
+				goal_offset.y = goal_offset.x = 0;
+				if(this->entity[i][j].type == CRATE)
+					goal_offset.x = 64;
+				//SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[3], NULL, &tile);
+				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[3], &goal_offset, &tile);
+			}
 		}
 	}
 }
 
 
+bool map::isSolved() {
+	for (int i = 0; i < dimension.height; i++) {
+		for (int j = 0; j < dimension.width; j++) {
+			if (entity[i][j].is_goal == true && entity[i][j].type != CRATE)
+				return false;
+		}
+	}
+	return true;
+}
+
+
 map* loadMap(const char* fName, actor* player) {
 	FILE* pMap = fopen(fName, "r");
+	if (pMap == NULL)
+		return NULL;
 	map* loadedMap = new map;
 	char val;
 	fscanf(pMap, "%d\n%d\n", &(loadedMap->dimension.width), &(loadedMap->dimension.height));
@@ -211,6 +234,31 @@ map* loadMap(const char* fName, actor* player) {
 	return loadedMap;
 }
 
+
+map_list::map_list(const char* path) {
+	FILE* pMaps = fopen(path, "r");
+	int count = 0;
+	char val[30];
+	 while (fscanf(pMaps, "%s\n", val) != -1) {
+		 count++;
+	 }
+	 this->amount = count;
+	 rewind(pMaps);
+	 arr = new char*[count];
+	 for (int i = 0; i < count; i++) {
+		this->arr[i] = new char[30];
+	 }
+	 for (int i = 0; i < count; i++) {
+		 fscanf(pMaps, "%s\n", val);
+		 memcpy_s(arr[i], 30, val, 30);
+	 }
+
+}
+map_list::~map_list() {
+	for (int i = 0; i < amount; i++)
+		delete[] arr[i];
+	delete[] arr;
+}
 
 SDL_Rect calculateTileDimension(map* gameMap) {
 	SDL_Rect result_tile;
@@ -313,6 +361,7 @@ directions angleToDirection(int angle) {
 		case 180: return DOWN;
 		case 270: return LEFT;
 	}
+	return UP;
 }
 
 
@@ -322,7 +371,8 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 	SDL_Event event;
 	actor Player; actor activeCrate;
 	activeCrate.initialize(0, 0, true, PUSHING_SPEED);
-	map* gameMap = loadMap(lvlName, &Player); 
+	map* gameMap = loadMap(lvlName, &Player);
+	if (gameMap == NULL) return MAIN_MENU;
 	text_display messages(gameDisplay.renderer);
 
 
@@ -366,12 +416,15 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 		Player.draw(&gameDisplay, tile);
 		activeCrate.draw(&gameDisplay, tile);
 
-		Player.update(delta, gameMap, &activeCrate);
+		if (Player.update(delta, gameMap, &activeCrate)) {
+			gameMap->draw(&gameDisplay, tile);
+			Player.draw(&gameDisplay, tile);
+			SDL_RenderPresent(gameDisplay.renderer);
+			break;
+		}
 		activeCrate.update(delta, gameMap, NULL);
-
 		SDL_RenderPresent(gameDisplay.renderer);
 
-		// obs³uga zdarzeñ (o ile jakieœ zasz³y) / handling of events (if there were any)
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_KEYDOWN:
@@ -398,6 +451,61 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 		};
 		frames++;
 	};
+	
+	SDL_Rect textbox;
+	textbox.h = 44;
+	textbox.w = SCREEN_WIDTH;
+	textbox.x = 0;
+	textbox.y = SCREEN_HEIGHT/2;
+	SDL_Rect src_box;
+	src_box.w = SCREEN_WIDTH;
+	src_box.h = 44;
+	src_box.x = src_box.y = 0;
+
+
+	
+	//The current input text.
+	char player_name[256] = { '\0' };
+	SDL_StartTextInput();
+	while (1) {
+		DrawRectangle(messages.surface, 0, 0, SCREEN_WIDTH, 44, czerwony, niebieski);
+		sprintf(text, "level completed! ");
+		DrawString(messages.surface, messages.surface->w / 2 - strlen(text) * 8 / 2, 10, text, gameDisplay.charset);
+		sprintf(text, "Enter player name: %s ", player_name);
+		DrawString(messages.surface, messages.surface->w / 2 - strlen(text) * 8 / 2, 20, text, gameDisplay.charset);
+		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
+		SDL_RenderCopy(gameDisplay.renderer, messages.texture, &src_box, &textbox);
+		SDL_RenderPresent(gameDisplay.renderer);
+		bool quit = false;
+			while (SDL_PollEvent(&event)) {
+				switch (event.type) {
+				case SDL_KEYDOWN:
+					if (event.key.keysym.sym == SDLK_BACKSPACE) {
+						if (strlen(player_name))
+							player_name[strlen(player_name) - 1] = '\0';
+					}
+					else if (event.key.keysym.sym == SDLK_RETURN)
+						quit = true;
+					break;
+				case SDL_TEXTINPUT:
+					printf("input:%s", event.text.text);
+					if(strlen(player_name) < MAX_PL_NAME_LENGTH)
+						strcat(player_name, event.text.text);
+					break;
+				case SDL_KEYUP:
+					break;
+				case SDL_QUIT:
+					delete gameMap;
+					return QUIT;
+					break;
+				};
+			}
+			if (quit) break;
+	}
+	//save to file player_name;
+	SDL_StopTextInput();
+	delete gameMap;
+	return CONTINUE_GAME;
 }
 
 
@@ -479,6 +587,7 @@ game_states cursor::pos_val() {
 	case 3:
 		return QUIT;
 	}
+	return GAME;
 }
 
 map::~map() {
