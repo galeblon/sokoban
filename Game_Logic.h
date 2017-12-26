@@ -107,7 +107,7 @@ struct cursor {
 	int origin_y;
 
 	cursor(int size, int origin_x, int origin_y, int jump);
-	void change_pos(int dir);
+	void change_pos(int dir, int num_of_options, bool loop);
 	int y_val();
 	game_states pos_val();
 };
@@ -154,7 +154,12 @@ game_states gameLoop(const char* lvlName, display &gameDisplay);
 // petla w ktorej odbywa sie menu glowne
 game_states menuLoop(display &gameDisplay);
 
+// petla w w ktorej odbywa sie wybor poziomu
+game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber);
+
 void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin, int spacing);
+
+void drawSelect(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int spacing, int topMargin, int beginIndex, int max);
 
 
 #endif 

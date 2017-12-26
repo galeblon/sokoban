@@ -532,8 +532,8 @@ game_states menuLoop(display &gameDisplay) {
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_ESCAPE) return QUIT;
 				else if (event.key.keysym.sym == SDLK_RETURN) return menuCursor.pos_val();
-				else if (event.key.keysym.sym == SDLK_UP) menuCursor.change_pos(-1);
-				else if (event.key.keysym.sym == SDLK_DOWN) menuCursor.change_pos(1);
+				else if (event.key.keysym.sym == SDLK_UP) menuCursor.change_pos(-1, NUM_OF_OPTIONS, true);
+				else if (event.key.keysym.sym == SDLK_DOWN) menuCursor.change_pos(1, NUM_OF_OPTIONS, true);
 			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
@@ -544,6 +544,63 @@ game_states menuLoop(display &gameDisplay) {
 	}
 }
 
+
+game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber) {
+	SDL_Event event;
+	text_display messages(gameDisplay.renderer);
+
+	int top_margin = 24;
+	int spacing = 12;
+	int begin_index = 0;
+	int max_on_screen = (SCREEN_HEIGHT-top_margin)/(spacing);
+	cursor menuCursor(OPTION_HEIGHT, messages.surface->w / 2 - 100, top_margin, spacing);
+
+	while (1) {
+		menuCursor.shape.y = menuCursor.y_val();
+		SDL_FillRect(messages.surface, NULL, SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00));
+		drawSelect(gameDisplay, messages.surface, mapList, spacing, top_margin, begin_index, max_on_screen);
+		SDL_FillRect(messages.surface, &(menuCursor.shape), SDL_MapRGB(messages.surface->format, 0xFF, 0xFF, 0xFF));
+
+		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
+		SDL_RenderCopy(gameDisplay.renderer, messages.texture, NULL, NULL);
+		SDL_RenderPresent(gameDisplay.renderer);
+
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE) return MAIN_MENU;
+				else if (event.key.keysym.sym == SDLK_RETURN) {
+					*mapNumber = menuCursor.pos + begin_index;
+					return GAME;
+				}
+				else if (event.key.keysym.sym == SDLK_UP) menuCursor.change_pos(-1, mapList->amount, false);
+				else if (event.key.keysym.sym == SDLK_DOWN) menuCursor.change_pos(1, mapList->amount, false);
+			case SDL_KEYUP:
+				break;
+			case SDL_QUIT:
+				return QUIT;
+				break;
+			};
+		};
+		if (menuCursor.pos >= max_on_screen) {
+			if(begin_index<mapList->amount-max_on_screen)begin_index += 1;
+			menuCursor.pos--;
+		}
+		if (menuCursor.pos < 0) {
+			if(begin_index>0)begin_index -= 1;
+			menuCursor.pos++;
+		}
+	}
+}
+
+void drawSelect(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int spacing, int topMargin, int beginIndex, int max) {
+	char text[256];
+	int endIndex = beginIndex + max > mapList->amount ? mapList->amount : beginIndex + max;
+	for (int i = beginIndex; i < endIndex; i++) {
+		sscanf(mapList->arr[i], "%30s.lvl\n", text);
+		DrawString(screen, screen->w / 2 - strlen(mapList->arr[i]) * 8 / 2,  topMargin+(i-beginIndex)*spacing, mapList->arr[i], gameDisplay.charset);
+	}
+}
 
 void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin, int spacing) {
 	const char* menu_options[NUM_OF_OPTIONS] = { "New Game", "Select Level", "High Scores", "Quit" };
@@ -563,11 +620,11 @@ cursor::cursor(int size, int origin_x, int origin_y, int jump) {
 }
 
 
-void cursor::change_pos(int dir) {
-	if (this->pos == 0 && dir < 0)
-		this->pos = NUM_OF_OPTIONS - 1;
+void cursor::change_pos(int dir, int num_of_options, bool loop) {
+	if (this->pos == 0 && dir < 0 && loop)
+		this->pos = num_of_options - 1;
 	else
-		this->pos = (this->pos + dir) % NUM_OF_OPTIONS;
+		this->pos = (this->pos + dir) % num_of_options;
 }
 
 
@@ -581,7 +638,7 @@ game_states cursor::pos_val() {
 	case 0:
 		return GAME;
 	case 1:
-		return GAME;
+		return SELECT;
 	case 2:
 		return GAME;
 	case 3:
