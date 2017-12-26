@@ -1,6 +1,5 @@
 #include"Game_Logic.h"
 
-
 void actor::initialize(int x, int y, bool isPuppet, int vel = RUNNING_SPEED) {
 	angle = 0;
 	old_angle = 0;
@@ -250,7 +249,7 @@ map_list::map_list(const char* path) {
 	 }
 	 for (int i = 0; i < count; i++) {
 		 fscanf(pMaps, "%s\n", val);
-		 memcpy_s(arr[i], 30, val, 30);
+		 memcpy(arr[i], val, 30);
 	 }
 
 }
