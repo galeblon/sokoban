@@ -10,12 +10,16 @@
 
 #define PUSHING_SPEED 3
 #define RUNNING_SPEED 12
-#define ROTATING_SPEED 12 
+#define ROTATING_SPEED 12
 
 #define LEGEND_HEIGHT 100
 
 #define MAX_PL_NAME_LENGTH 30
+#define MAX_MAP_NAME_LENGTH 30
 
+#define MAP_DIR "./maps/"
+#define MAP_LIST_DIR "./maps/map.list"
+#define SCORE_LIST_DIR "./scores/"
 
 
 enum types {
@@ -79,6 +83,8 @@ struct map_list {
 	int amount;
 	char ** arr;
 
+	void cleanUp();
+	void map_list::reload(const char* path);
 	map_list(const char* path);
 	~map_list();
 };
@@ -157,9 +163,21 @@ game_states menuLoop(display &gameDisplay);
 // petla w w ktorej odbywa sie wybor poziomu
 game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber);
 
+// podfunkcja menuLoop odpowiedzialna za wyswietlenie odpowienich pozycji w menu
 void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin, int spacing);
 
+// podfunkcja selectLoop odpowiedzialna za wyswietlenie listy map
 void drawSelect(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int spacing, int topMargin, int beginIndex, int max);
 
+// zamienia spacje na _ w lancuchu znakow;
+void removeSpaces(char* str);
+
+// dodaje mape do pliku z lista map
+void addMap(char* map_name, const char* dir);
+
+// zapisuje wynik uzytkownika na danej mapie do pliku
+void saveScore(float time, int moves, char* player_name, const char* lvlName);
+
+char* getFileFromPath(const char* lvlName);
 
 #endif 

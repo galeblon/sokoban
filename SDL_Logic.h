@@ -25,13 +25,18 @@ extern "C"
 //#define SCREEN_HEIGHT	480
 
 
+#define FLOOR_TEXTURE 0
+#define WALL_TEXTURE 1
+#define CRATE_TEXTURE 2
+#define GOAL_TEXTURE 3
+#define PLAYER_TEXTURE 4
+
 
 struct display {
 	SDL_Renderer *renderer;
 	SDL_Window *window;
 	SDL_Texture* gameTextures[5];
 	SDL_Surface* charset;
-
 
 	// inicjalizacja window and renderera jak i za³adowanie potrzebnych tekstur
 	int initialize();
@@ -72,6 +77,7 @@ void DrawLine(SDL_Surface *screen, int x, int y, int l, int dx, int dy, Uint32 c
 // rysowanie prostok¹ta o d³ugoœci boków l i k
 void DrawRectangle(SDL_Surface *screen, int x, int y, int l, int k, Uint32 outlineColor, Uint32 fillColor);
 
-
+// Pobiera ciag znakow z klawiatury
+void getTextInput(display &gameDisplay, const char* query, char* res, int max_length);
 
 #endif 

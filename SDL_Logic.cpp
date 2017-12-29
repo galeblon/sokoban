@@ -1,5 +1,5 @@
 #include"SDL_Logic.h"
-
+#include"Game_Logic.h"
 
 int display::initialize() {
 	this->charset = loadSurface("./cs8x8.bmp");
@@ -131,8 +131,69 @@ text_display::text_display(SDL_Renderer* renderer) {
 }
 
 
-
 text_display::~text_display(){
 	SDL_FreeSurface(this->surface);
 	SDL_DestroyTexture(this->texture);
+}
+
+
+void getTextInput(display &gameDisplay, const char* query, char* res, int max_length) {
+	text_display messages(gameDisplay.renderer);
+	SDL_Rect textbox;
+	textbox.h = 44;
+	textbox.w = SCREEN_WIDTH;
+	textbox.x = 0;
+	textbox.y = SCREEN_HEIGHT / 2;
+	SDL_Rect src_box;
+	src_box.w = SCREEN_WIDTH;
+	src_box.h = 44;
+	src_box.x = src_box.y = 0;
+
+	char text[128];
+	int czarny = SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00);
+	int zielony = SDL_MapRGB(messages.surface->format, 0x00, 0xFF, 0x00);
+	int czerwony = SDL_MapRGB(messages.surface->format, 0xFF, 0x00, 0x00);
+	int niebieski = SDL_MapRGB(messages.surface->format, 0x11, 0x11, 0xCC);
+
+	SDL_Event event;
+	res[0] = '\0';
+	SDL_StartTextInput();
+	while (1) {
+		DrawRectangle(messages.surface, 0, 0, SCREEN_WIDTH, 44, czerwony, niebieski);
+		sprintf(text, "%s %s ", query, res);
+		DrawString(messages.surface, messages.surface->w / 2 - strlen(text) * 8 / 2, 20, text, gameDisplay.charset);
+		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
+		SDL_RenderCopy(gameDisplay.renderer, messages.texture, &src_box, &textbox);
+		SDL_RenderPresent(gameDisplay.renderer);
+		bool quit = false;
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_BACKSPACE) {
+					if (strlen(res))
+						res[strlen(res) - 1] = '\0';
+				}
+				else if (event.key.keysym.sym == SDLK_RETURN)
+					quit = true;
+				else if (event.key.keysym.sym == SDLK_ESCAPE) {
+					res[0] = '\0';
+					return;
+				}
+				break;
+			case SDL_TEXTINPUT:
+				printf("input:%s", event.text.text);
+				if (strlen(res) < max_length)
+					strcat(res, event.text.text);
+				break;
+			case SDL_KEYUP:
+				break;
+			case SDL_QUIT:
+				res[0] ='\0';
+				return;
+				break;
+			};
+		}
+		if (quit) break;
+	}
+	SDL_StopTextInput();
 }

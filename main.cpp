@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 	SDL_SetRenderDrawColor(gameDisplay.renderer, 0, 0, 0, 255);
 	SDL_SetWindowTitle(gameDisplay.window, "Sokoban");
 
-	map_list mapList("./maps/map.list");
+	map_list mapList(MAP_LIST_DIR);
 	int map_number = 0;
 	char map_path[50];
 	// wy³¹czenie widocznoœci kursora myszy
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 		switch (gameState) {
 		case MAIN_MENU: gameState = menuLoop(gameDisplay); break;
 		case GAME: gameState = gameLoop(map_path, gameDisplay); if(gameState == MAIN_MENU) map_number = 0; break;
-		case RESET: gameState = gameLoop(map_path, gameDisplay); break;
+		case RESET: gameState = gameLoop(map_path, gameDisplay); if(gameState == MAIN_MENU) map_number = 0; break;
 		case SELECT: gameState = selectLoop(gameDisplay, &mapList, &map_number); break;
 		case CONTINUE_GAME: 
 			if (map_number < mapList.amount-1) {

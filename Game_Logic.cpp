@@ -144,9 +144,9 @@ void actor::draw(display* gameDisplay, SDL_Rect tile) {
 		tile_tmp.y += this->pos.y*tile.w;
 		tile_tmp.x += this->pos.x*tile.w;
 		getInterpolation(&tile_tmp, 1*tile.w, this->angle);
-		SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[0], NULL, &tile_tmp);
+		SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[FLOOR_TEXTURE], NULL, &tile_tmp);
 	}
-	SDL_RenderCopyEx(gameDisplay->renderer, gameDisplay->gameTextures[is_puppet? 2:4], NULL, &tile, curr_angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(gameDisplay->renderer, gameDisplay->gameTextures[is_puppet? CRATE_TEXTURE:PLAYER_TEXTURE], NULL, &tile, curr_angle, NULL, SDL_FLIP_NONE);
 
 }
 
@@ -158,14 +158,14 @@ void map::draw(display* gameDisplay, SDL_Rect tile) {
 			tile.y = tmp_tile.y + i*tile.w;
 			tile.x = tmp_tile.x + j*tile.w;
 			if (this->entity[i][j].type == WALL) {
-				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[1], NULL, &tile);
+				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[WALL_TEXTURE], NULL, &tile);
 			}
 			else if (this->entity[i][j].type == CRATE) {
-				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[0], NULL, &tile);
-				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[2], NULL, &tile);
+				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[FLOOR_TEXTURE], NULL, &tile);
+				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[CRATE_TEXTURE], NULL, &tile);
 			}
 			else if (this->entity[i][j].type == FLOOR) {
-				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[0], NULL, &tile);
+				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[FLOOR_TEXTURE], NULL, &tile);
 			}
 			if (this->entity[i][j].is_goal) {
 				SDL_Rect goal_offset;
@@ -173,8 +173,7 @@ void map::draw(display* gameDisplay, SDL_Rect tile) {
 				goal_offset.y = goal_offset.x = 0;
 				if(this->entity[i][j].type == CRATE)
 					goal_offset.x = 64;
-				//SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[3], NULL, &tile);
-				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[3], &goal_offset, &tile);
+				SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[GOAL_TEXTURE], &goal_offset, &tile);
 			}
 		}
 	}
@@ -235,29 +234,38 @@ map* loadMap(const char* fName, actor* player) {
 
 
 map_list::map_list(const char* path) {
-	FILE* pMaps = fopen(path, "r");
-	int count = 0;
-	char val[30];
-	 while (fscanf(pMaps, "%s\n", val) != -1) {
-		 count++;
-	 }
-	 this->amount = count;
-	 rewind(pMaps);
-	 arr = new char*[count];
-	 for (int i = 0; i < count; i++) {
-		this->arr[i] = new char[30];
-	 }
-	 for (int i = 0; i < count; i++) {
-		 fscanf(pMaps, "%s\n", val);
-		 memcpy(arr[i], val, 30);
-	 }
-
+	reload(path);
 }
 map_list::~map_list() {
+	cleanUp();
+}
+
+void map_list::cleanUp() {
 	for (int i = 0; i < amount; i++)
 		delete[] arr[i];
 	delete[] arr;
 }
+
+
+void map_list::reload(const char* path) {
+	FILE* pMaps = fopen(path, "r");
+	int count = 0;
+	char val[30];
+	while (fscanf(pMaps, "%s\n", val) != -1) {
+		count++;
+	}
+	this->amount = count;
+	rewind(pMaps);
+	arr = new char*[count];
+	for (int i = 0; i < count; i++) {
+		this->arr[i] = new char[30];
+	}
+	for (int i = 0; i < count; i++) {
+		fscanf(pMaps, "%s\n", val);
+		memcpy(arr[i], val, 30);
+	}
+}
+
 
 SDL_Rect calculateTileDimension(map* gameMap) {
 	SDL_Rect result_tile;
@@ -450,59 +458,12 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 		};
 		frames++;
 	};
-	
-	SDL_Rect textbox;
-	textbox.h = 44;
-	textbox.w = SCREEN_WIDTH;
-	textbox.x = 0;
-	textbox.y = SCREEN_HEIGHT/2;
-	SDL_Rect src_box;
-	src_box.w = SCREEN_WIDTH;
-	src_box.h = 44;
-	src_box.x = src_box.y = 0;
-
-
-	
-	//The current input text.
-	char player_name[256] = { '\0' };
-	SDL_StartTextInput();
-	while (1) {
-		DrawRectangle(messages.surface, 0, 0, SCREEN_WIDTH, 44, czerwony, niebieski);
-		sprintf(text, "level completed! ");
-		DrawString(messages.surface, messages.surface->w / 2 - strlen(text) * 8 / 2, 10, text, gameDisplay.charset);
-		sprintf(text, "Enter player name: %s ", player_name);
-		DrawString(messages.surface, messages.surface->w / 2 - strlen(text) * 8 / 2, 20, text, gameDisplay.charset);
-		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
-		SDL_RenderCopy(gameDisplay.renderer, messages.texture, &src_box, &textbox);
-		SDL_RenderPresent(gameDisplay.renderer);
-		bool quit = false;
-			while (SDL_PollEvent(&event)) {
-				switch (event.type) {
-				case SDL_KEYDOWN:
-					if (event.key.keysym.sym == SDLK_BACKSPACE) {
-						if (strlen(player_name))
-							player_name[strlen(player_name) - 1] = '\0';
-					}
-					else if (event.key.keysym.sym == SDLK_RETURN)
-						quit = true;
-					break;
-				case SDL_TEXTINPUT:
-					printf("input:%s", event.text.text);
-					if(strlen(player_name) < MAX_PL_NAME_LENGTH)
-						strcat(player_name, event.text.text);
-					break;
-				case SDL_KEYUP:
-					break;
-				case SDL_QUIT:
-					delete gameMap;
-					return QUIT;
-					break;
-				};
-			}
-			if (quit) break;
-	}
-	//save to file player_name;
-	SDL_StopTextInput();
+	char player_name[256];
+	getTextInput(gameDisplay, "Level completed! Enter your name: ", player_name, MAX_PL_NAME_LENGTH);
+	removeSpaces(player_name);
+	if (strlen(player_name))
+		saveScore(worldTime, Player.moves, player_name, lvlName);
+	printf("%s", player_name);
 	delete gameMap;
 	return CONTINUE_GAME;
 }
@@ -574,6 +535,15 @@ game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber) 
 				}
 				else if (event.key.keysym.sym == SDLK_UP) menuCursor.change_pos(-1, mapList->amount, false);
 				else if (event.key.keysym.sym == SDLK_DOWN) menuCursor.change_pos(1, mapList->amount, false);
+				else if (event.key.keysym.sym == SDLK_a) {
+					char map_name[256];
+					getTextInput(gameDisplay, "Enter map name: ", map_name, MAX_MAP_NAME_LENGTH);
+					removeSpaces(map_name);
+					addMap(map_name, MAP_LIST_DIR);
+					mapList->cleanUp();
+					mapList->reload(MAP_LIST_DIR);
+					printf("%s", map_name);
+				}
 			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
@@ -593,11 +563,13 @@ game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber) 
 }
 
 void drawSelect(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int spacing, int topMargin, int beginIndex, int max) {
-	char text[256];
+	char text[256] = "Press a - to add map";
+	DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2, text, gameDisplay.charset);
 	int endIndex = beginIndex + max > mapList->amount ? mapList->amount : beginIndex + max;
 	for (int i = beginIndex; i < endIndex; i++) {
-		sscanf(mapList->arr[i], "%30s.lvl\n", text);
-		DrawString(screen, screen->w / 2 - strlen(mapList->arr[i]) * 8 / 2,  topMargin+(i-beginIndex)*spacing, mapList->arr[i], gameDisplay.charset);
+		sscanf(mapList->arr[i], "%s", text);
+		text[strlen(text) - 4] = '\0';
+		DrawString(screen, screen->w / 2 - strlen(mapList->arr[i]) * 8 / 2,  topMargin+(i-beginIndex)*spacing, text, gameDisplay.charset);
 	}
 }
 
@@ -646,9 +618,49 @@ game_states cursor::pos_val() {
 	return GAME;
 }
 
+
 map::~map() {
 	for (int i = 0; i < dimension.height; i++)
 		delete[] entity[i];
 	delete[] entity;
 
+}
+
+
+void removeSpaces(char* str) {
+	for (int i = 0; i < strlen(str); i++)
+		if (str[i] == ' ')
+			str[i] = '_';
+}
+
+
+void addMap(char* map_name, const char* dir) {
+	FILE* fp;
+	char map_file[256];
+	sprintf(map_file, "\n%s.lvl", map_name);
+	fp = fopen(dir, "a+");
+	if (fp != NULL) {
+		fputs(map_file, fp);
+		fclose(fp);
+	}
+}
+
+void saveScore(float time, int moves, char* player_name, const char* lvlName) {
+	FILE* fp;
+	char score_file[256];
+	char* short_name = getFileFromPath(lvlName);
+	sprintf(score_file, "%s%s.score", SCORE_LIST_DIR, short_name);
+	fp = fopen(score_file, "a+");
+	if (fp != NULL) {
+		fprintf(fp, "%s|%d|%f\n", player_name, moves, time);
+	}
+	fclose(fp);
+	delete short_name;
+}
+
+char* getFileFromPath(const char* lvlName) {
+	char * lvl_local = new char[MAX_MAP_NAME_LENGTH+4];
+	memcpy(lvl_local, &(lvlName[strlen(MAP_DIR)]), strlen(lvlName)-strlen(MAP_DIR));
+	lvl_local[strlen(lvlName) - strlen(MAP_DIR)] = '\0';
+	return lvl_local;
 }
