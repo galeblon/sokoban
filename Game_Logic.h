@@ -31,6 +31,7 @@ enum types {
 	EMPTY
 };
 
+
 enum mov_states {
 	STOPPED,
 	MOVING,
@@ -38,14 +39,17 @@ enum mov_states {
 	PUSHING
 };
 
+
 enum game_states {
 	GAME,
 	MAIN_MENU,
 	RESET,
 	SELECT,
 	CONTINUE_GAME,
+	SCORES,
 	QUIT
 };
+
 
 enum directions {
 	UP,
@@ -54,21 +58,26 @@ enum directions {
 	RIGHT
 };
 
+
 struct coords {
 	int x;
 	int y;
 
 	void setCoord(int a, int b) { x = a; y = b; };
 };
+
+
 struct dimensions {
 	int width;
 	int height;
 };
 
+
 struct entities {
 	types type;
 	bool is_goal;
 };
+
 
 struct map {
 	entities** entity;
@@ -79,6 +88,7 @@ struct map {
 	~map();
 };
 
+
 struct map_list {
 	int amount;
 	char ** arr;
@@ -88,6 +98,7 @@ struct map_list {
 	map_list(const char* path);
 	~map_list();
 };
+
 
 struct actor {
 	bool is_puppet;
@@ -116,6 +127,25 @@ struct cursor {
 	void change_pos(int dir, int num_of_options, bool loop);
 	int y_val();
 	game_states pos_val();
+};
+
+
+struct score {
+	char player_name[MAX_PL_NAME_LENGTH];
+	int moves;
+	float time;
+};
+
+
+struct score_board {
+	score * array_time;
+	score * array_moves;
+	int size;
+
+	void load_scores(const char* mapName);
+	void cleanUp();
+
+	~score_board();
 };
 
 // zczytuje mape z pliku tekstowego i inicjalizuje wartosci poczatkowe gracza
@@ -163,11 +193,17 @@ game_states menuLoop(display &gameDisplay);
 // petla w w ktorej odbywa sie wybor poziomu
 game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber);
 
+// petla w ktorej odbywa sie wyswietlanie najlepszych wynikow
+game_states scoreLoop(display &gameDisplay, map_list* mapList);
+
 // podfunkcja menuLoop odpowiedzialna za wyswietlenie odpowienich pozycji w menu
 void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin, int spacing);
 
 // podfunkcja selectLoop odpowiedzialna za wyswietlenie listy map
 void drawSelect(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int spacing, int topMargin, int beginIndex, int max);
+
+// podfunkcja scoreLoop odpowiedzialna za wyswietlenie wynikow dla danej mapy
+void drawScore(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int max, int top_margin, int map_index, score_board* res);
 
 // zamienia spacje na _ w lancuchu znakow;
 void removeSpaces(char* str);
@@ -178,6 +214,11 @@ void addMap(char* map_name, const char* dir);
 // zapisuje wynik uzytkownika na danej mapie do pliku
 void saveScore(float time, int moves, char* player_name, const char* lvlName);
 
+// wy³uskuje nazwe mapy ze scie¿ki
 char* getFileFromPath(const char* lvlName);
+
+// funkcje potrzebne do wywolania funkcji qsort
+int cmp_by_time(const void* a, const void *b);
+int cmp_by_moves(const void*a, const void *b);
 
 #endif 

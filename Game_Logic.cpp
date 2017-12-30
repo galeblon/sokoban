@@ -539,9 +539,11 @@ game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber) 
 					char map_name[256];
 					getTextInput(gameDisplay, "Enter map name: ", map_name, MAX_MAP_NAME_LENGTH);
 					removeSpaces(map_name);
-					addMap(map_name, MAP_LIST_DIR);
-					mapList->cleanUp();
-					mapList->reload(MAP_LIST_DIR);
+					if (strlen(map_name)) {
+						addMap(map_name, MAP_LIST_DIR);
+						mapList->cleanUp();
+						mapList->reload(MAP_LIST_DIR);
+					}
 					printf("%s", map_name);
 				}
 			case SDL_KEYUP:
@@ -562,6 +564,71 @@ game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber) 
 	}
 }
 
+
+game_states scoreLoop(display &gameDisplay, map_list* mapList){ 
+	SDL_Event event;
+	text_display messages(gameDisplay.renderer);
+	int top_margin = 24;
+	int spacing = 12;
+	int max_on_screen = (SCREEN_HEIGHT - top_margin) / (spacing);
+	int map_index = 0;
+	score_board results;
+	results.load_scores(mapList->arr[map_index]);
+	while (1) {
+		SDL_FillRect(messages.surface, NULL, SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00));
+		drawScore(gameDisplay, messages.surface, mapList, max_on_screen, top_margin, map_index, &results);
+		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
+		SDL_RenderCopy(gameDisplay.renderer, messages.texture, NULL, NULL);
+		SDL_RenderPresent(gameDisplay.renderer);
+
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE) return MAIN_MENU;
+				else if (event.key.keysym.sym == SDLK_UP) printf("dol");
+				else if (event.key.keysym.sym == SDLK_DOWN) printf("gora");
+				else if (event.key.keysym.sym == SDLK_LEFT) {
+					map_index--;
+					if (map_index < 0) map_index = mapList->amount - 1;
+					results.cleanUp();
+					results.load_scores(mapList->arr[map_index]);
+				}
+				else if (event.key.keysym.sym == SDLK_RIGHT) {
+					map_index++;
+					if (map_index > mapList->amount - 1) map_index = 0;
+					results.cleanUp();
+					results.load_scores(mapList->arr[map_index]);
+				}
+			case SDL_KEYUP:
+				break;
+			case SDL_QUIT:
+				return QUIT;
+				break;
+			};
+		};
+	}
+}
+
+
+void drawScore(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int max, int top_margin, int map_index, score_board* res) {
+	char text[256] = "\0";
+	sprintf(text, "\032 %s \033", mapList->arr[map_index]);
+	DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2, text, gameDisplay.charset);
+	if (res->size) {
+		sprintf(text, "By time: ");
+		DrawString(screen, screen->w / 2 - 30*8 - 4*8, top_margin, text, gameDisplay.charset);
+		sprintf(text, "By Moves: ");
+		DrawString(screen, screen->w / 2 + 60, top_margin, text, gameDisplay.charset);
+		for (int i = 0; i < res->size; i++) {
+			sprintf(text, "%s %.2fs", res->array_time[i].player_name, res->array_time[i].time);
+			DrawString(screen, screen->w / 2 - 30*8 - 4 * 8, 2*top_margin + i*12, text, gameDisplay.charset);
+			sprintf(text, "%s %d", res->array_moves[i].player_name, res->array_moves[i].moves);
+			DrawString(screen, screen->w / 2 + 60, 2*top_margin + i*12, text, gameDisplay.charset);
+		}
+	}
+}
+
+
 void drawSelect(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int spacing, int topMargin, int beginIndex, int max) {
 	char text[256] = "Press a - to add map";
 	DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2, text, gameDisplay.charset);
@@ -572,6 +639,7 @@ void drawSelect(display &gameDisplay, SDL_Surface *screen, const map_list* mapLi
 		DrawString(screen, screen->w / 2 - strlen(mapList->arr[i]) * 8 / 2,  topMargin+(i-beginIndex)*spacing, text, gameDisplay.charset);
 	}
 }
+
 
 void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin, int spacing) {
 	const char* menu_options[NUM_OF_OPTIONS] = { "New Game", "Select Level", "High Scores", "Quit" };
@@ -611,7 +679,7 @@ game_states cursor::pos_val() {
 	case 1:
 		return SELECT;
 	case 2:
-		return GAME;
+		return SCORES;
 	case 3:
 		return QUIT;
 	}
@@ -652,7 +720,7 @@ void saveScore(float time, int moves, char* player_name, const char* lvlName) {
 	sprintf(score_file, "%s%s.score", SCORE_LIST_DIR, short_name);
 	fp = fopen(score_file, "a+");
 	if (fp != NULL) {
-		fprintf(fp, "%s|%d|%f\n", player_name, moves, time);
+		fprintf(fp, "%s %d %f\n", player_name, moves, time);
 	}
 	fclose(fp);
 	delete short_name;
@@ -663,4 +731,76 @@ char* getFileFromPath(const char* lvlName) {
 	memcpy(lvl_local, &(lvlName[strlen(MAP_DIR)]), strlen(lvlName)-strlen(MAP_DIR));
 	lvl_local[strlen(lvlName) - strlen(MAP_DIR)] = '\0';
 	return lvl_local;
+}
+
+
+int cmp_by_time(const void* a, const void *b) {
+	score casted_a = *(score*)a;
+	score casted_b = *(score*)b;
+
+	if (casted_a.time > casted_b.time) return 1;
+	if (casted_a.time < casted_b.time) return -1;
+	return 0;
+}
+
+int cmp_by_moves(const void* a, const void *b) {
+	score casted_a = *(score*)a;
+	score casted_b = *(score*)b;
+
+	if (casted_a.moves > casted_b.moves) return 1;
+	if (casted_a.moves < casted_b.moves) return -1;
+	return 0;
+}
+
+
+score_board::~score_board() {
+	cleanUp();
+}
+
+
+void score_board::cleanUp() {
+	if (this->size) {
+		delete[] array_time;
+		delete[] array_moves;
+		this->size = 0;
+	}
+}
+
+
+void score_board::load_scores(const char* mapName) {
+	this->size = 0;
+	char path[256];
+	sprintf(path, "%s%s.score", SCORE_LIST_DIR, mapName);
+	FILE* fp;
+	fp = fopen(path, "r");
+	if (fp != NULL) {
+		int count = 0;
+		score val;
+		while (fscanf(fp, "%s %d %f\n", &(val.player_name), &(val.moves), &(val.time)) != -1) {
+			count++;
+		}
+		
+		if (count) {
+			this->size = count;
+			this->array_moves = new score[count];
+			this->array_time = new score[count];
+			rewind(fp);
+			count = 0;
+			while (fscanf(fp, "%s %d %f\n", &(val.player_name), &(val.moves), &(val.time)) != -1) {
+				memcpy(&(this->array_moves[count]), &val, sizeof val);
+				memcpy(&(this->array_time[count]), &val, sizeof val);
+				count++;
+			}
+			for (int i = 0; i < this->size; i++) {
+				printf("%s %f| ", array_time[i].player_name, array_time[i].time);
+			}
+			printf("\n");
+			SDL_qsort(array_moves, count, sizeof(score), cmp_by_moves);
+			SDL_qsort(array_time, count, sizeof(score), cmp_by_time);
+			for (int i = 0; i < this->size; i++) {
+				printf("%s %f| ", array_time[i].player_name, array_time[i].time);
+			}
+		}
+		fclose(fp);
+	}
 }

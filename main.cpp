@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
 		case GAME: gameState = gameLoop(map_path, gameDisplay); if(gameState == MAIN_MENU) map_number = 0; break;
 		case RESET: gameState = gameLoop(map_path, gameDisplay); if(gameState == MAIN_MENU) map_number = 0; break;
 		case SELECT: gameState = selectLoop(gameDisplay, &mapList, &map_number); break;
+		case SCORES: gameState = scoreLoop(gameDisplay, &mapList); break;
 		case CONTINUE_GAME: 
 			if (map_number < mapList.amount-1) {
 				map_number++;
