@@ -124,6 +124,9 @@ int actor::update(double delta, map* gameMap, actor* puppet) {
 
 void actor::draw(display* gameDisplay, SDL_Rect tile) {
 	SDL_Rect tile_tmp = tile;
+	SDL_Rect actor_frame;
+	actor_frame.x = actor_frame.y = 0;
+	actor_frame.h = actor_frame.w = 64;
 	double curr_angle = this->angle;
 	if (this->mov_state == STOPPED && is_puppet)
 		return;
@@ -135,6 +138,10 @@ void actor::draw(display* gameDisplay, SDL_Rect tile) {
 		tile.y += this->old_pos.y*tile.w; // +((is_puppet && !(int(angle) % 90)) ? 1 : 0);
 		tile.x += this->old_pos.x*tile.w; // +((is_puppet && !(int(angle) % 90)) ? 1 : 0);
 		getInterpolation(&tile, this->timer*mov_vel*tile.w, this->angle);
+		if (!is_puppet) {
+			float frame = timer*mov_vel*4;
+			actor_frame.x = 64 * (int(frame)%4);
+		}
 	}
 	else {
 		tile.y += this->pos.y*tile.w;
@@ -146,7 +153,7 @@ void actor::draw(display* gameDisplay, SDL_Rect tile) {
 		getInterpolation(&tile_tmp, 1*tile.w, this->angle);
 		SDL_RenderCopy(gameDisplay->renderer, gameDisplay->gameTextures[FLOOR_TEXTURE], NULL, &tile_tmp);
 	}
-	SDL_RenderCopyEx(gameDisplay->renderer, gameDisplay->gameTextures[is_puppet? CRATE_TEXTURE:PLAYER_TEXTURE], NULL, &tile, curr_angle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(gameDisplay->renderer, gameDisplay->gameTextures[is_puppet? CRATE_TEXTURE:PLAYER_TEXTURE], &actor_frame, &tile, curr_angle, NULL, SDL_FLIP_NONE);
 
 }
 

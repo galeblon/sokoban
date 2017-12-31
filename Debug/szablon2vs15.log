@@ -2,57 +2,78 @@
 c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\math.h(1001): warning C4005: 'M_PI': macro redefinition
   c:\pliki\studia\pp\szablon2\sdl-2.0.7\include\sdl_stdinc.h(499): note: see previous definition of 'M_PI'
 c:\pliki\studia\pp\szablon2\game_logic.cpp(103): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(137): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(146): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(195): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(140): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(142): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(153): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(202): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(200): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(207): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(251): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(258): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(254): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(261): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(264): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(271): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(272): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(273): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(274): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(350): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(353): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(356): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(359): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(465): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(414): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(279): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(280): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(281): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(357): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(360): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(363): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(366): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(472): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(421): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(477): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\pliki\studia\pp\szablon2\game_logic.cpp(615): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(618): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(620): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(623): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(484): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\pliki\studia\pp\szablon2\game_logic.cpp(622): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
 c:\pliki\studia\pp\szablon2\game_logic.cpp(625): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(637): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(627): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\pliki\studia\pp\szablon2\game_logic.cpp(630): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\pliki\studia\pp\szablon2\game_logic.cpp(632): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\pliki\studia\pp\szablon2\game_logic.cpp(644): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: see declaration of 'sscanf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(699): warning C4018: '<': signed/unsigned mismatch
-c:\pliki\studia\pp\szablon2\game_logic.cpp(708): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(706): warning C4018: '<': signed/unsigned mismatch
+c:\pliki\studia\pp\szablon2\game_logic.cpp(715): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(709): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(716): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(720): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(727): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(721): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(728): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(773): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(780): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(775): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(782): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(779): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(786): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
-c:\pliki\studia\pp\szablon2\game_logic.cpp(789): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\pliki\studia\pp\szablon2\game_logic.cpp(796): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
+  Generating Code...
+  Compiling...
+  main.cpp
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\math.h(1001): warning C4005: 'M_PI': macro redefinition
+  c:\pliki\studia\pp\szablon2\sdl-2.0.7\include\sdl_stdinc.h(499): note: see previous definition of 'M_PI'
+c:\pliki\studia\pp\szablon2\main.cpp(31): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\pliki\studia\pp\szablon2\main.cpp(6): warning C4101: 'event': unreferenced local variable
+c:\pliki\studia\pp\szablon2\main.cpp(5): warning C4101: 'quit': unreferenced local variable
+  SDL_Logic.cpp
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\math.h(1001): warning C4005: 'M_PI': macro redefinition
+  c:\pliki\studia\pp\szablon2\sdl-2.0.7\include\sdl_stdinc.h(499): note: see previous definition of 'M_PI'
+c:\pliki\studia\pp\szablon2\sdl_logic.cpp(42): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\pliki\studia\pp\szablon2\sdl_logic.cpp(185): warning C4018: '<': signed/unsigned mismatch
+c:\pliki\studia\pp\szablon2\sdl_logic.cpp(163): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\pliki\studia\pp\szablon2\sdl_logic.cpp(186): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
+  Generating Code...
   szablon2vs15.vcxproj -> C:\Pliki\studia\pp\szablon2\Debug\szablon2vs15.exe
   szablon2vs15.vcxproj -> C:\Pliki\studia\pp\szablon2\Debug\szablon2vs15.pdb (Full PDB)

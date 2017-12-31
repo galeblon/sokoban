@@ -9,7 +9,7 @@
 #define OPTION_HEIGHT 8
 
 #define PUSHING_SPEED 3
-#define RUNNING_SPEED 12
+#define RUNNING_SPEED 6
 #define ROTATING_SPEED 12
 
 #define LEGEND_HEIGHT 100
