@@ -236,7 +236,26 @@ map* loadMap(const char* fName, actor* player) {
 		}
 	}
 	fclose(pMap);
+	if (!valid_map(loadedMap)) {
+		loadedMap->~map();
+		return NULL;
+	}
 	return loadedMap;
+}
+
+
+bool valid_map(map* mapToCheck) {
+	for (int i = 0; i < mapToCheck->dimension.height; i++) {
+		for (int j = 0; j < mapToCheck->dimension.width; j++) {
+
+		}
+	}
+	return true;
+}
+
+
+bool check_neighbours(entities* el, int width) {
+
 }
 
 
@@ -577,13 +596,16 @@ game_states scoreLoop(display &gameDisplay, map_list* mapList){
 	text_display messages(gameDisplay.renderer);
 	int top_margin = 24;
 	int spacing = 12;
-	int max_on_screen = (SCREEN_HEIGHT - top_margin) / (spacing);
+	int max_on_screen = ((SCREEN_HEIGHT - top_margin) / (spacing)) - spacing;
 	int map_index = 0;
-	score_board results;
+	cursor scoreCursor(0, 0, 0, 0);
+	int begin_index = 0;
+	score_board results;	
 	results.load_scores(mapList->arr[map_index]);
+	if (results.size > max_on_screen) scoreCursor.pos = max_on_screen-1;
 	while (1) {
 		SDL_FillRect(messages.surface, NULL, SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00));
-		drawScore(gameDisplay, messages.surface, mapList, max_on_screen, top_margin, map_index, &results);
+		drawScore(gameDisplay, messages.surface, mapList, max_on_screen, top_margin, map_index, &results, begin_index);
 		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
 		SDL_RenderCopy(gameDisplay.renderer, messages.texture, NULL, NULL);
 		SDL_RenderPresent(gameDisplay.renderer);
@@ -592,18 +614,30 @@ game_states scoreLoop(display &gameDisplay, map_list* mapList){
 			switch (event.type) {
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_ESCAPE) return MAIN_MENU;
-				else if (event.key.keysym.sym == SDLK_UP) printf("dol");
-				else if (event.key.keysym.sym == SDLK_DOWN) printf("gora");
+				else if (event.key.keysym.sym == SDLK_UP) { 
+					if (begin_index > 0) {
+						begin_index--;
+						scoreCursor.change_pos(-1, results.size, false);
+					}
+				}
+				else if (event.key.keysym.sym == SDLK_DOWN) { 
+					if (begin_index < results.size - max_on_screen) {
+						begin_index++;
+						scoreCursor.change_pos(1, results.size, false);
+					}
+				}
 				else if (event.key.keysym.sym == SDLK_LEFT) {
 					map_index--;
 					if (map_index < 0) map_index = mapList->amount - 1;
 					results.cleanUp();
+					begin_index = 0;
 					results.load_scores(mapList->arr[map_index]);
 				}
 				else if (event.key.keysym.sym == SDLK_RIGHT) {
 					map_index++;
 					if (map_index > mapList->amount - 1) map_index = 0;
 					results.cleanUp();
+					begin_index = 0;
 					results.load_scores(mapList->arr[map_index]);
 				}
 			case SDL_KEYUP:
@@ -617,20 +651,29 @@ game_states scoreLoop(display &gameDisplay, map_list* mapList){
 }
 
 
-void drawScore(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int max, int top_margin, int map_index, score_board* res) {
+void drawScore(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int max, int top_margin, int map_index, score_board* res, int begin_index) {
 	char text[256] = "\0";
 	sprintf(text, "\032 %s \033", mapList->arr[map_index]);
 	DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2, text, gameDisplay.charset);
+	if (res->size > max) {
+		double offset = (double(begin_index) / (res->size - max));
+		float frame = (SCREEN_HEIGHT - 4*top_margin);
+		sprintf(text, "\030");
+		DrawString(screen, screen->w / 2, 24+frame*offset, text, gameDisplay.charset);
+		sprintf(text, "\031");
+		DrawString(screen, screen->w / 2, 32+frame*offset, text, gameDisplay.charset);
+	}
 	if (res->size) {
+		int end_index = begin_index + max > res->size ? res->size : begin_index + max;
 		sprintf(text, "By time: ");
 		DrawString(screen, screen->w / 2 - 30*8 - 4*8, top_margin, text, gameDisplay.charset);
 		sprintf(text, "By Moves: ");
 		DrawString(screen, screen->w / 2 + 60, top_margin, text, gameDisplay.charset);
-		for (int i = 0; i < res->size; i++) {
-			sprintf(text, "%s %.2fs", res->array_time[i].player_name, res->array_time[i].time);
-			DrawString(screen, screen->w / 2 - 30*8 - 4 * 8, 2*top_margin + i*12, text, gameDisplay.charset);
-			sprintf(text, "%s %d", res->array_moves[i].player_name, res->array_moves[i].moves);
-			DrawString(screen, screen->w / 2 + 60, 2*top_margin + i*12, text, gameDisplay.charset);
+		for (int i = begin_index; i < end_index; i++) {
+			sprintf(text, "%d. %s %.2fs", i+1,res->array_time[i].player_name, res->array_time[i].time);
+			DrawString(screen, screen->w / 2 - 30*8 - 4 * 8, 2*top_margin + (i - begin_index) *12, text, gameDisplay.charset);
+			sprintf(text, "%d. %s %d", i+1, res->array_moves[i].player_name, res->array_moves[i].moves);
+			DrawString(screen, screen->w / 2 + 60, 2*top_margin + (i-begin_index)*12, text, gameDisplay.charset);
 		}
 	}
 }

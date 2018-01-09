@@ -94,7 +94,7 @@ struct map_list {
 	char ** arr;
 
 	void cleanUp();
-	void map_list::reload(const char* path);
+	void reload(const char* path);
 	map_list(const char* path);
 	~map_list();
 };
@@ -151,6 +151,9 @@ struct score_board {
 // zczytuje mape z pliku tekstowego i inicjalizuje wartosci poczatkowe gracza
 map* loadMap(const char* fName, actor* player);
 
+// sprawdza czy wczytana mapa jest poprawna i zwraca true jesli tak jest
+bool valid_map(map* mapToCheck);
+
 // oblicza wymiary pojedynczego kafelka i marginesy
 SDL_Rect calculateTileDimension(map* gameMap);
 
@@ -203,7 +206,7 @@ void drawMenu(display &gameDisplay, SDL_Surface* screen, int top_margin, int spa
 void drawSelect(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int spacing, int topMargin, int beginIndex, int max);
 
 // podfunkcja scoreLoop odpowiedzialna za wyswietlenie wynikow dla danej mapy
-void drawScore(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int max, int top_margin, int map_index, score_board* res);
+void drawScore(display &gameDisplay, SDL_Surface *screen, const map_list* mapList, int max, int top_margin, int map_index, score_board* res, int begin_index);
 
 // zamienia spacje na _ w lancuchu znakow;
 void removeSpaces(char* str);

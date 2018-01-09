@@ -19,8 +19,8 @@ extern "C"
 
 //#define SCREEN_WIDTH	1920
 //#define SCREEN_HEIGHT	1080
-#define SCREEN_WIDTH	1376
-#define SCREEN_HEIGHT	678
+#define SCREEN_WIDTH	1366
+#define SCREEN_HEIGHT	768
 //#define SCREEN_WIDTH	640
 //#define SCREEN_HEIGHT	480
 

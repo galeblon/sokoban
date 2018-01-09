@@ -56,24 +56,8 @@ c:\pliki\studia\pp\szablon2\game_logic.cpp(786): warning C4996: 'fscanf': This f
 c:\pliki\studia\pp\szablon2\game_logic.cpp(796): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
   Generating Code...
-  Compiling...
+  Skipping... (no relevant changes detected)
   main.cpp
-c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\math.h(1001): warning C4005: 'M_PI': macro redefinition
-  c:\pliki\studia\pp\szablon2\sdl-2.0.7\include\sdl_stdinc.h(499): note: see previous definition of 'M_PI'
-c:\pliki\studia\pp\szablon2\main.cpp(31): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\main.cpp(6): warning C4101: 'event': unreferenced local variable
-c:\pliki\studia\pp\szablon2\main.cpp(5): warning C4101: 'quit': unreferenced local variable
   SDL_Logic.cpp
-c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\math.h(1001): warning C4005: 'M_PI': macro redefinition
-  c:\pliki\studia\pp\szablon2\sdl-2.0.7\include\sdl_stdinc.h(499): note: see previous definition of 'M_PI'
-c:\pliki\studia\pp\szablon2\sdl_logic.cpp(42): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\sdl_logic.cpp(185): warning C4018: '<': signed/unsigned mismatch
-c:\pliki\studia\pp\szablon2\sdl_logic.cpp(163): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
-c:\pliki\studia\pp\szablon2\sdl_logic.cpp(186): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'
-  Generating Code...
   szablon2vs15.vcxproj -> C:\Pliki\studia\pp\szablon2\Debug\szablon2vs15.exe
   szablon2vs15.vcxproj -> C:\Pliki\studia\pp\szablon2\Debug\szablon2vs15.pdb (Full PDB)
