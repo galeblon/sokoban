@@ -202,8 +202,12 @@ bool map::isSolved() {
 
 map* loadMap(const char* fName, actor* player) {
 	FILE* pMap = fopen(fName, "r");
-	if (pMap == NULL)
+	if (pMap == NULL) {
+		char err_text[256];
+		sprintf(err_text, "map %s doesn't exist", fName);
+		logError(err_text, LOG_FILE);
 		return NULL;
+	}
 	map* loadedMap = new map;
 	char val;
 	fscanf(pMap, "%d\n%d\n", &(loadedMap->dimension.width), &(loadedMap->dimension.height));
@@ -240,6 +244,9 @@ map* loadMap(const char* fName, actor* player) {
 	fclose(pMap);
 	if (!valid_map(loadedMap)) {
 		loadedMap->~map();
+		char err_text[256];
+		sprintf(err_text, "map %s is invalid", fName);
+		logError(err_text, LOG_FILE);
 		return NULL;
 	}
 	return loadedMap;

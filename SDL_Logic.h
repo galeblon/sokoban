@@ -29,6 +29,8 @@ extern "C"
 #define GOAL_TEXTURE 3
 #define PLAYER_TEXTURE 4
 
+#define LOG_FILE "./sokoban_err.log"
+
 
 
 struct display {
@@ -76,7 +78,10 @@ void DrawLine(SDL_Surface *screen, int x, int y, int l, int dx, int dy, Uint32 c
 // rysowanie prostok¹ta o d³ugoœci boków l i k
 void DrawRectangle(SDL_Surface *screen, int x, int y, int l, int k, Uint32 outlineColor, Uint32 fillColor);
 
-// Pobiera ciag znakow z klawiatury
+// pobiera ciag znakow z klawiatury
 void getTextInput(display &gameDisplay, const char* query, char* res, int max_length);
+
+// dopisuje tresc val do pliku o sciezce path, tworzy taki plik jesli go nie ma.
+void logError(const char* val, const char* path);
 
 #endif 

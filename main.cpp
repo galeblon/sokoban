@@ -8,12 +8,14 @@ int main(int argc, char **argv) {
 	game_states gameState = MAIN_MENU;
 
 	if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
+		logError(SDL_GetError(), LOG_FILE);
 		return 1;
 		}
 
 	if (gameDisplay.initialize() != 0) {
+		logError(SDL_GetError(), LOG_FILE);
 		SDL_Quit();
+		return 1;
 	}
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");

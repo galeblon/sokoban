@@ -6,7 +6,7 @@
 int display::initialize() {
 	this->charset = loadSurface("./cs8x8.bmp");
 	if (SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, 0, &(this->window), &(this->renderer))) {
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
+		logError(SDL_GetError(), LOG_FILE);
 		return 1;
 	}
 	const char* names[5] = { "floor.bmp", "wall.bmp", "crate.bmp", "goal.bmp", "player.bmp"};
@@ -31,7 +31,7 @@ display::~display() {
 SDL_Surface* loadSurface(const char* path) {
 	SDL_Surface* surface = SDL_LoadBMP(path);
 	if (surface == NULL) {
-		printf("SDL_LoadBMP(cs8x8.bmp) error: %s\n", SDL_GetError());
+		logError(SDL_GetError(), LOG_FILE);
 		return surface;
 	};
 	SDL_SetColorKey(surface, true, 0x0000);
@@ -45,11 +45,11 @@ SDL_Texture* loadTexture(SDL_Renderer* renderer, const char* path) {
 	sprintf(buff, "./textures/%s", path);
 	SDL_Surface* surface = SDL_LoadBMP(buff);
 	if (surface == NULL) {
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load surface: %s", SDL_GetError());
+		logError(SDL_GetError(), LOG_FILE);
 		return texture;
 	}
 	if (SDL_SetColorKey(surface, true, SDL_MapRGB(surface->format, 255, 0, 0)) != 0) {
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't set the color key: %s", SDL_GetError());
+		logError(SDL_GetError(), LOG_FILE);
 		return texture;
 	}
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -189,4 +189,14 @@ void getTextInput(display &gameDisplay, const char* query, char* res, int max_le
 		if (quit) break;
 	}
 	SDL_StopTextInput();
+}
+
+
+void logError(const char* val, const char* path) {
+	FILE* fp = fopen(path, "a+");
+	if (fp) {
+		fputs(val, fp);
+		fputs("\n", fp);
+		fclose(fp);
+	}
 }
