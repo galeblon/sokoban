@@ -1,9 +1,9 @@
 #include"SDL_Logic.h"
 #include"Game_Logic.h"
 
+
+
 int main(int argc, char **argv) {
-	int quit;
-	SDL_Event event;
 	display gameDisplay;
 	game_states gameState = MAIN_MENU;
 
@@ -16,7 +16,6 @@ int main(int argc, char **argv) {
 		SDL_Quit();
 	}
 
-	
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	SDL_RenderSetLogicalSize(gameDisplay.renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 	SDL_SetRenderDrawColor(gameDisplay.renderer, 0, 0, 0, 255);
@@ -25,7 +24,6 @@ int main(int argc, char **argv) {
 	map_list mapList(MAP_LIST_DIR);
 	int map_number = 0;
 	char map_path[50];
-	// wy³¹czenie widocznoœci kursora myszy
 	SDL_ShowCursor(SDL_DISABLE);
 	while (gameState != QUIT) {
 		sprintf(map_path, "./maps/%s", mapList.arr[map_number]);
@@ -48,7 +46,6 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	// zwolnienie powierzchni / freeing all surfaces
 	SDL_Quit();
 	return 0;
 	};

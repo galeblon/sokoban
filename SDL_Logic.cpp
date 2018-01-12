@@ -1,6 +1,8 @@
 #include"SDL_Logic.h"
 #include"Game_Logic.h"
 
+
+
 int display::initialize() {
 	this->charset = loadSurface("./cs8x8.bmp");
 	if (SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, 0, &(this->window), &(this->renderer))) {
@@ -25,14 +27,15 @@ display::~display() {
 	SDL_DestroyWindow(this->window);
 }
 
+
 SDL_Surface* loadSurface(const char* path) {
-	SDL_Surface* charset = SDL_LoadBMP(path);
-	if (charset == NULL) {
+	SDL_Surface* surface = SDL_LoadBMP(path);
+	if (surface == NULL) {
 		printf("SDL_LoadBMP(cs8x8.bmp) error: %s\n", SDL_GetError());
-		return charset;
+		return surface;
 	};
-	SDL_SetColorKey(charset, true, 0x0000);
-	return charset;
+	SDL_SetColorKey(surface, true, 0x0000);
+	return surface;
 }
 
 
@@ -53,7 +56,6 @@ SDL_Texture* loadTexture(SDL_Renderer* renderer, const char* path) {
 	SDL_FreeSurface(surface);
 	return texture;
 }
-
 
 
 void DrawString(SDL_Surface *screen, int x, int y, const char *text,
@@ -79,7 +81,6 @@ void DrawString(SDL_Surface *screen, int x, int y, const char *text,
 };
 
 
-
 void DrawSurface(SDL_Surface *screen, SDL_Surface *sprite, int x, int y) {
 	SDL_Rect dest;
 	dest.x = x - sprite->w / 2;
@@ -90,13 +91,11 @@ void DrawSurface(SDL_Surface *screen, SDL_Surface *sprite, int x, int y) {
 };
 
 
-
 void DrawPixel(SDL_Surface *surface, int x, int y, Uint32 color) {
 	int bpp = surface->format->BytesPerPixel;
 	Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 	*(Uint32 *)p = color;
 };
-
 
 
 void DrawLine(SDL_Surface *screen, int x, int y, int l, int dx, int dy, Uint32 color) {
@@ -106,7 +105,6 @@ void DrawLine(SDL_Surface *screen, int x, int y, int l, int dx, int dy, Uint32 c
 		y += dy;
 	};
 };
-
 
 
 void DrawRectangle(SDL_Surface *screen, int x, int y, int l, int k,
@@ -149,17 +147,15 @@ void getTextInput(display &gameDisplay, const char* query, char* res, int max_le
 	src_box.h = 44;
 	src_box.x = src_box.y = 0;
 
+	int border_color = SDL_MapRGB(messages.surface->format, 0xFF, 0xFF, 0xFF);
+	int content_color = SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00);
 	char text[128];
-	int czarny = SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00);
-	int zielony = SDL_MapRGB(messages.surface->format, 0x00, 0xFF, 0x00);
-	int czerwony = SDL_MapRGB(messages.surface->format, 0xFF, 0x00, 0x00);
-	int niebieski = SDL_MapRGB(messages.surface->format, 0x11, 0x11, 0xCC);
 
 	SDL_Event event;
 	res[0] = '\0';
 	SDL_StartTextInput();
 	while (1) {
-		DrawRectangle(messages.surface, 0, 0, SCREEN_WIDTH, 44, czerwony, niebieski);
+		DrawRectangle(messages.surface, 0, 0, SCREEN_WIDTH, 44, border_color, content_color);
 		sprintf(text, "%s %s ", query, res);
 		DrawString(messages.surface, messages.surface->w / 2 - strlen(text) * 8 / 2, 20, text, gameDisplay.charset);
 		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
@@ -181,11 +177,8 @@ void getTextInput(display &gameDisplay, const char* query, char* res, int max_le
 				}
 				break;
 			case SDL_TEXTINPUT:
-				printf("input:%s", event.text.text);
 				if (strlen(res) < max_length)
 					strcat(res, event.text.text);
-				break;
-			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
 				res[0] ='\0';

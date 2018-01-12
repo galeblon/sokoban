@@ -1,5 +1,7 @@
 #include"Game_Logic.h"
 
+
+
 void actor::initialize(int x, int y, bool isPuppet, int vel = RUNNING_SPEED) {
 	angle = 0;
 	old_angle = 0;
@@ -255,7 +257,7 @@ bool valid_map(map* mapToCheck) {
 
 
 bool check_neighbours(entities* el, int width) {
-
+	return true;
 }
 
 
@@ -399,8 +401,8 @@ directions angleToDirection(int angle) {
 
 
 game_states gameLoop(const char* lvlName, display &gameDisplay) {
-	int t1, t2, quit, frames;
-	double delta, worldTime, fpsTimer, fps;
+	int t1, t2;
+	double delta, worldTime;
 	SDL_Event event;
 	actor Player; actor activeCrate;
 	activeCrate.initialize(0, 0, true, PUSHING_SPEED);
@@ -408,20 +410,13 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 	if (gameMap == NULL) return MAIN_MENU;
 	text_display messages(gameDisplay.renderer);
 
-
+	int border_color = SDL_MapRGB(messages.surface->format, 0xFF, 0xFF, 0xFF);
+	int content_color = SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00);
 	char text[128];
-	int czarny = SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00);
-	int zielony = SDL_MapRGB(messages.surface->format, 0x00, 0xFF, 0x00);
-	int czerwony = SDL_MapRGB(messages.surface->format, 0xFF, 0x00, 0x00);
-	int niebieski = SDL_MapRGB(messages.surface->format, 0x11, 0x11, 0xCC);
 
-	t1 = SDL_GetTicks();
-
-	frames = 0;
-	fpsTimer = 0;
-	fps = 0;
-	quit = 0;
+	SDL_Rect tile = calculateTileDimension(gameMap);
 	worldTime = 0;
+	t1 = SDL_GetTicks();
 	while (true) {
 		t2 = SDL_GetTicks();
 		delta = (t2 - t1) * 0.001;
@@ -429,21 +424,13 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 		worldTime += delta;
 
 
-		SDL_FillRect(messages.surface, NULL, czarny);
-		fpsTimer += delta;
-		if (fpsTimer > 0.5) {
-			fps = frames * 2;
-			frames = 0;
-			fpsTimer -= 0.5;
-		};
-		DrawRectangle(messages.surface, 4, 4, SCREEN_WIDTH - 8, 36, czerwony, niebieski);
-		sprintf(text, "Moves: %3d Time elapsed: %.1lf s  %.0lf FPS", Player.moves, worldTime, fps);
+		SDL_FillRect(messages.surface, NULL, content_color);
+		DrawRectangle(messages.surface, 4, 4, SCREEN_WIDTH - 8, 36, border_color, content_color);
+		sprintf(text, "Moves: %3d Time elapsed: %.1lf s", Player.moves, worldTime);
 		DrawString(messages.surface, messages.surface->w / 2 - strlen(text) * 8 / 2, 10, text, gameDisplay.charset);
 		SDL_UpdateTexture(messages.texture, NULL, messages.surface->pixels, messages.surface->pitch);
 		SDL_RenderCopy(gameDisplay.renderer, messages.texture, NULL, NULL);
 
-
-		SDL_Rect tile = calculateTileDimension(gameMap);
 
 		gameMap->draw(&gameDisplay, tile);
 		Player.draw(&gameDisplay, tile);
@@ -455,6 +442,7 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 			SDL_RenderPresent(gameDisplay.renderer);
 			break;
 		}
+
 		activeCrate.update(delta, gameMap, NULL);
 		SDL_RenderPresent(gameDisplay.renderer);
 
@@ -474,22 +462,18 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 					return MAIN_MENU;
 				}
 				break;
-			case SDL_KEYUP:
-				break;
 			case SDL_QUIT:
 				delete gameMap;
 				return QUIT;
 				break;
 			};
 		};
-		frames++;
 	};
 	char player_name[256];
 	getTextInput(gameDisplay, "Level completed! Enter your name: ", player_name, MAX_PL_NAME_LENGTH);
 	removeSpaces(player_name);
 	if (strlen(player_name))
 		saveScore(worldTime, Player.moves, player_name, lvlName);
-	printf("%s", player_name);
 	delete gameMap;
 	return CONTINUE_GAME;
 }
@@ -520,7 +504,6 @@ game_states menuLoop(display &gameDisplay) {
 				else if (event.key.keysym.sym == SDLK_RETURN) return menuCursor.pos_val();
 				else if (event.key.keysym.sym == SDLK_UP) menuCursor.change_pos(-1, NUM_OF_OPTIONS, true);
 				else if (event.key.keysym.sym == SDLK_DOWN) menuCursor.change_pos(1, NUM_OF_OPTIONS, true);
-			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
 				return QUIT;
@@ -570,9 +553,7 @@ game_states selectLoop(display &gameDisplay, map_list* mapList, int* mapNumber) 
 						mapList->cleanUp();
 						mapList->reload(MAP_LIST_DIR);
 					}
-					printf("%s", map_name);
 				}
-			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
 				return QUIT;
@@ -640,7 +621,6 @@ game_states scoreLoop(display &gameDisplay, map_list* mapList){
 					begin_index = 0;
 					results.load_scores(mapList->arr[map_index]);
 				}
-			case SDL_KEYUP:
 				break;
 			case SDL_QUIT:
 				return QUIT;
@@ -829,7 +809,6 @@ void score_board::load_scores(const char* mapName) {
 		while (fscanf(fp, "%s %d %f\n", &(val.player_name), &(val.moves), &(val.time)) != -1) {
 			count++;
 		}
-		
 		if (count) {
 			this->size = count;
 			this->array_moves = new score[count];
@@ -841,15 +820,8 @@ void score_board::load_scores(const char* mapName) {
 				memcpy(&(this->array_time[count]), &val, sizeof val);
 				count++;
 			}
-			for (int i = 0; i < this->size; i++) {
-				printf("%s %f| ", array_time[i].player_name, array_time[i].time);
-			}
-			printf("\n");
 			SDL_qsort(array_moves, count, sizeof(score), cmp_by_moves);
 			SDL_qsort(array_time, count, sizeof(score), cmp_by_time);
-			for (int i = 0; i < this->size; i++) {
-				printf("%s %f| ", array_time[i].player_name, array_time[i].time);
-			}
 		}
 		fclose(fp);
 	}

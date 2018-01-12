@@ -12,7 +12,6 @@ extern "C" {
 #include"./sdl-2.0.7/include/SDL_main.h"
 }
 
-// main
 #ifdef __cplusplus
 extern "C"
 #endif
@@ -24,12 +23,12 @@ extern "C"
 //#define SCREEN_WIDTH	640
 //#define SCREEN_HEIGHT	480
 
-
 #define FLOOR_TEXTURE 0
 #define WALL_TEXTURE 1
 #define CRATE_TEXTURE 2
 #define GOAL_TEXTURE 3
 #define PLAYER_TEXTURE 4
+
 
 
 struct display {
