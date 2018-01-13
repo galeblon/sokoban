@@ -140,6 +140,8 @@ void actor::draw(display* gameDisplay, SDL_Rect tile) {
 		tile.y += this->old_pos.y*tile.w;
 		tile.x += this->old_pos.x*tile.w;
 		getInterpolation(&tile, this->timer*mov_vel*tile.w, this->angle);
+		if (this->angle == 270 && tile.w%2) tile.y++; // wtf? kiedy kafelek jest  nieparzystej wielkosci
+		if (this->angle == 180 && tile.w%2) tile.x++; // trzeba przesunac o 1 piksel dla poprawnego wyswietlania.
 		if (!is_puppet) {
 			float frame = timer*ANIMATION_SPEED*mov_vel;
 			actor_frame.x = 64 * (int(frame)%4);
@@ -453,6 +455,7 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 	int content_color = SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00);
 	char text[128];
 	SDL_Rect tile = calculateTileDimension(gameMap);
+	printf("x:%d, y:%d", tile.x, tile.y);
 	worldTime = 0;
 	t1 = SDL_GetTicks();
 	while (true) {
