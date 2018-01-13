@@ -48,7 +48,7 @@ SDL_Texture* loadTexture(SDL_Renderer* renderer, const char* path) {
 		logError(SDL_GetError(), LOG_FILE);
 		return texture;
 	}
-	if (SDL_SetColorKey(surface, true, SDL_MapRGB(surface->format, 255, 0, 0)) != 0) {
+	if (SDL_SetColorKey(surface, true, SDL_MapRGB(surface->format, 127, 127, 127)) != 0) {
 		logError(SDL_GetError(), LOG_FILE);
 		return texture;
 	}

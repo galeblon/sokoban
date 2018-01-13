@@ -10,6 +10,7 @@
 
 #define PUSHING_SPEED 3
 #define RUNNING_SPEED 6
+#define ANIMATION_SPEED 3
 #define ROTATING_SPEED 12
 
 #define LEGEND_HEIGHT 100
@@ -25,7 +26,6 @@
 enum types {
 	WALL,
 	CRATE,
-	PLAYER,
 	FLOOR,
 	GOAL,
 	EMPTY
@@ -84,6 +84,7 @@ struct map {
 	dimensions dimension;
 
 	bool isSolved();
+	void cleanUp();
 	void draw(display* gameDisplay, SDL_Rect tile);
 	~map();
 };
@@ -154,13 +155,15 @@ map* loadMap(const char* fName, actor* player);
 // sprawdza czy wczytana mapa jest poprawna i zwraca true jesli tak jest
 bool valid_map(map* mapToCheck);
 
+// sprawdza czy element w tablicy ma poprawnych sasiadow (sciany, skrzynki lub inne podlogi), zwraca 1 jezeli sa poprawni
+bool check_neighbours(map* mapToCheck, int x, int y);
+
 // oblicza wymiary pojedynczego kafelka i marginesy
 SDL_Rect calculateTileDimension(map* gameMap);
 
 // sprawdza czy podane wspolrzedne mieszcza sie w tablicy kafelek
 // zwraca 1 jezeli sie mieszcza, 0 w przeciwnym wypadku
 int isInBounds(map* gameMap, int x, int y);
-
 
 // sprawdza czy podane pole jest dostepne
 // zwraca 0 jezeli nie jest
@@ -217,7 +220,7 @@ void addMap(char* map_name, const char* dir);
 // zapisuje wynik uzytkownika na danej mapie do pliku
 void saveScore(float time, int moves, char* player_name, const char* lvlName);
 
-// wy³uskuje nazwe mapy ze scie¿ki
+// wy³uskuje nazwe mapy ze scie¿ki, tworzy nowy char
 char* getFileFromPath(const char* lvlName);
 
 // funkcje potrzebne do wywolania funkcji qsort

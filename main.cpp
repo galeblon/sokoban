@@ -6,6 +6,7 @@
 int main(int argc, char **argv) {
 	display gameDisplay;
 	game_states gameState = MAIN_MENU;
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
 	if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		logError(SDL_GetError(), LOG_FILE);
@@ -18,7 +19,6 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	SDL_RenderSetLogicalSize(gameDisplay.renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 	SDL_SetRenderDrawColor(gameDisplay.renderer, 0, 0, 0, 255);
 	SDL_SetWindowTitle(gameDisplay.window, "Sokoban");
@@ -47,7 +47,6 @@ int main(int argc, char **argv) {
 			break;
 		}
 	}
-
 	SDL_Quit();
 	return 0;
 	};

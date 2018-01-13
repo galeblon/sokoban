@@ -137,11 +137,11 @@ void actor::draw(display* gameDisplay, SDL_Rect tile) {
 		curr_angle = rot_vel*curr_angle*this->timer + this->old_angle;
 	}
 	if (this->mov_state == MOVING) {
-		tile.y += this->old_pos.y*tile.w; // +((is_puppet && !(int(angle) % 90)) ? 1 : 0);
-		tile.x += this->old_pos.x*tile.w; // +((is_puppet && !(int(angle) % 90)) ? 1 : 0);
+		tile.y += this->old_pos.y*tile.w;
+		tile.x += this->old_pos.x*tile.w;
 		getInterpolation(&tile, this->timer*mov_vel*tile.w, this->angle);
 		if (!is_puppet) {
-			float frame = timer*mov_vel*4;
+			float frame = timer*ANIMATION_SPEED*mov_vel;
 			actor_frame.x = 64 * (int(frame)%4);
 		}
 	}
@@ -201,6 +201,7 @@ bool map::isSolved() {
 
 
 map* loadMap(const char* fName, actor* player) {
+	bool player_loaded = false;
 	FILE* pMap = fopen(fName, "r");
 	if (pMap == NULL) {
 		char err_text[256];
@@ -234,15 +235,25 @@ map* loadMap(const char* fName, actor* player) {
 				loadedMap->entity[i][j].is_goal = true;
 			}else if(val == 'p'){
 				loadedMap->entity[i][j].type = FLOOR;
-				if(player != NULL)
+				if (player != NULL && !player_loaded) {
 					player->initialize(j, i, false);
+					player_loaded = true;
+				}
 			} else{
 				loadedMap->entity[i][j].type = EMPTY;
 			}
 		}
 	}
 	fclose(pMap);
+	bool is_valid = true;
+	if (!player_loaded) {
+		logError("no player entry point on map", LOG_FILE);
+		is_valid = false;
+	}
 	if (!valid_map(loadedMap)) {
+		is_valid = false;
+	}
+	if (!is_valid) {
 		loadedMap->~map();
 		char err_text[256];
 		sprintf(err_text, "map %s is invalid", fName);
@@ -254,16 +265,37 @@ map* loadMap(const char* fName, actor* player) {
 
 
 bool valid_map(map* mapToCheck) {
+	int goal_count = 0; int crate_count = 0;
+	int is_valid = 1;
 	for (int i = 0; i < mapToCheck->dimension.height; i++) {
 		for (int j = 0; j < mapToCheck->dimension.width; j++) {
-
+			if (mapToCheck->entity[i][j].is_goal)goal_count++;
+			if (mapToCheck->entity[i][j].type == CRATE)crate_count++;
+			if (mapToCheck->entity[i][j].type == CRATE || mapToCheck->entity[i][j].type == FLOOR) {
+				if (is_valid && !check_neighbours(mapToCheck, j, i)) {
+					logError("walls don't enclose game area correctly", LOG_FILE);
+					is_valid = 0;
+				}
+			}
 		}
 	}
-	return true;
+	if (!goal_count || (goal_count != crate_count)) {
+		logError("invalid number of crates or goal tiles", LOG_FILE);
+		is_valid = 0;
+	}
+	return is_valid;
 }
 
 
-bool check_neighbours(entities* el, int width) {
+bool check_neighbours(map* mapToCheck, int x, int y){
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
+			if (isInBounds(mapToCheck, x + j, y + i)) {
+				if (mapToCheck->entity[y + i][x + j].type == EMPTY)
+					return false;
+			}
+		}	
+	}
 	return true;
 }
 
@@ -315,9 +347,9 @@ SDL_Rect calculateTileDimension(map* gameMap) {
 
 
 int isInBounds(map* gameMap, int x, int y) {
-	if (x > gameMap->dimension.width || x < 0)
+	if (x >= gameMap->dimension.width || x < 0)
 		return 0;
-	if (y > gameMap->dimension.height || y < 0)
+	if (y >= gameMap->dimension.height || y < 0)
 		return 0;
 	return 1;
 }
@@ -420,7 +452,6 @@ game_states gameLoop(const char* lvlName, display &gameDisplay) {
 	int border_color = SDL_MapRGB(messages.surface->format, 0xFF, 0xFF, 0xFF);
 	int content_color = SDL_MapRGB(messages.surface->format, 0x00, 0x00, 0x00);
 	char text[128];
-
 	SDL_Rect tile = calculateTileDimension(gameMap);
 	worldTime = 0;
 	t1 = SDL_GetTicks();
@@ -724,11 +755,14 @@ game_states cursor::pos_val() {
 }
 
 
-map::~map() {
+void map::cleanUp() {
 	for (int i = 0; i < dimension.height; i++)
 		delete[] entity[i];
 	delete[] entity;
+}
 
+map::~map() {
+	cleanUp();
 }
 
 
